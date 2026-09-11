@@ -255,6 +255,7 @@ func ListCardsByUser(db *sql.DB, userID int64) ([]domain.Card, error) {
 		if err := rows.Scan(&c.ID, &c.TelegramAccountID, &c.Number, &c.Last4, &c.OwnerName, &c.CreatedAt); err != nil {
 			return nil, err
 		}
+		c.Type = domain.CardType(c.Number)
 		list = append(list, c)
 	}
 	return list, nil
@@ -267,6 +268,7 @@ func GetCard(db *sql.DB, id int64) (*domain.Card, error) {
 	if err != nil {
 		return nil, err
 	}
+	c.Type = domain.CardType(c.Number)
 	return &c, nil
 }
 
@@ -294,6 +296,36 @@ func CardOwner(db *sql.DB, cardID int64) (int64, error) {
 
 // PickLeastLoadedCard user cartalari ichidan hozir active transactioni eng kam
 // bo'lganini tanlaydi (summa farqini minimallashtirish uchun). Tenglikda kichik id.
+// PickLeastLoadedCardOfType — PickLeastLoadedCard bilan bir xil, lekin faqat
+// berilgan tizimdagi (humo/uzcard) cartalar orasidan tanlaydi.
+func PickLeastLoadedCardOfType(db *sql.DB, userID int64, cardType string, timeoutMins int) (int64, error) {
+	rows, err := db.Query(`
+		SELECT c.id, COALESCE(c.number,'')
+		FROM cards c
+		JOIN telegram_accounts t ON t.id = c.telegram_account_id
+		LEFT JOIN transactions tr
+			ON tr.card_id = c.id AND tr.status = 1
+			AND tr.created_at BETWEEN datetime('now', ?) AND datetime('now')
+		WHERE t.user_id = ?
+		GROUP BY c.id
+		ORDER BY COUNT(tr.id) ASC, c.id ASC`, minutesArg(timeoutMins), userID)
+	if err != nil {
+		return 0, err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var id int64
+		var number string
+		if err := rows.Scan(&id, &number); err != nil {
+			return 0, err
+		}
+		if domain.CardType(number) == cardType {
+			return id, nil
+		}
+	}
+	return 0, sql.ErrNoRows
+}
+
 func PickLeastLoadedCard(db *sql.DB, userID int64, timeoutMins int) (int64, error) {
 	var cardID int64
 	err := db.QueryRow(`
@@ -322,6 +354,7 @@ func GetCardByLast4(db *sql.DB, telegramAccountID int64, last4 string) (*domain.
 	if err != nil {
 		return nil, err
 	}
+	c.Type = domain.CardType(c.Number)
 	return &c, nil
 }
 

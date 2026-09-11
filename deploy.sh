@@ -7,8 +7,8 @@ set -euo pipefail
 cd "$(dirname "$0")"
 
 HOST="ubuntu@185.196.215.165"
-SRC="$(pwd -W 2>/dev/null || pwd)"
-DOCKER_SRC="$(echo "$SRC" | sed -E 's#^([A-Za-z]):#/\L\1#; s#\#/#g')"
+# Git Bash reports the cwd as /c/Users/... — the form Docker Desktop mounts.
+DOCKER_SRC="$(pwd)"
 
 echo "==> go build (Docker, linux/amd64)"
 MSYS_NO_PATHCONV=1 docker run --rm -v "$DOCKER_SRC:/src" -w /src golang:1.24-bookworm bash /src/build-linux.sh >/dev/null

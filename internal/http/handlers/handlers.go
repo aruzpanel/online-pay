@@ -429,8 +429,9 @@ func (h *Handler) CardList(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) TransactionCreate(w http.ResponseWriter, r *http.Request) {
 	user := middleware.UserFrom(r)
 	var in struct {
-		CardID int64 `json:"card_id"`
-		Amount int64 `json:"amount"`
+		CardID   int64  `json:"card_id"`
+		CardType string `json:"card_type"` // ixtiyoriy: "humo" | "uzcard" — shu tizimdagi carta tanlanadi
+		Amount   int64  `json:"amount"`
 	}
 	if err := decode(r, &in); err != nil || in.Amount <= 0 {
 		fail(w, http.StatusBadRequest, "musbat amount majburiy")
@@ -438,7 +439,15 @@ func (h *Handler) TransactionCreate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	cardID := in.CardID
-	if cardID == 0 {
+	if cardID == 0 && in.CardType != "" {
+		// Mijoz to'lov tizimini tanlagan — o'sha tizimdagi eng kam yuklangan carta.
+		var err error
+		cardID, err = repository.PickLeastLoadedCardOfType(h.DB, user.ID, in.CardType, h.Cfg.TimeoutMins)
+		if err != nil {
+			fail(w, http.StatusBadRequest, in.CardType+" cartasi topilmadi — avval shu tizimdagi carta qo'shing")
+			return
+		}
+	} else if cardID == 0 {
 		// card_id berilmagan — eng kam yuklangan cartani avtomatik tanlaymiz.
 		var err error
 		cardID, err = repository.PickLeastLoadedCard(h.DB, user.ID, h.Cfg.TimeoutMins)
@@ -474,6 +483,7 @@ func (h *Handler) TransactionCreate(w http.ResponseWriter, r *http.Request) {
 			"number":     card.Number,
 			"last4":      card.Last4,
 			"owner_name": card.OwnerName,
+			"type":       domain.CardType(card.Number),
 		}
 	}
 	ok(w, resp)
@@ -511,6 +521,7 @@ func (h *Handler) PayInfo(w http.ResponseWriter, r *http.Request) {
 		"card_number":    tr.CardNumber,
 		"card_last4":     tr.CardLast4,
 		"card_owner":     tr.CardOwner,
+		"card_type":      domain.CardType(tr.CardNumber),
 		"state":          tr.State,
 		"status":         tr.Status,
 		"created_at":     tr.CreatedAt,

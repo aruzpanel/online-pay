@@ -7,7 +7,6 @@ import (
 	"os"
 	"path/filepath"
 	"sync"
-	"sync/atomic"
 	"time"
 
 	"github.com/UzStack/paycue/internal/config"
@@ -26,7 +25,37 @@ import (
 	"go.uber.org/zap"
 )
 
-const humoBotUsername = "HUMOcardbot"
+// Kirim xabarlarini yuboradigan bank botlari. HUMOcardbot — Humo cartalar,
+// CardXabarBot — Uzcard cartalar. Har biri alohida resolve qilinadi; topilmagani
+// (masalan account unga ulanmagan bo'lsa) shunchaki o'tkazib yuboriladi.
+var cardBotUsernames = []string{"HUMOcardbot", "CardXabarBot"}
+
+// botSet — kuzatilayotgan botlarning Telegram ID lari.
+type botSet struct {
+	mu  sync.RWMutex
+	ids map[int64]bool
+}
+
+func newBotSet() *botSet { return &botSet{ids: map[int64]bool{}} }
+
+func (b *botSet) add(id int64) {
+	b.mu.Lock()
+	b.ids[id] = true
+	b.mu.Unlock()
+}
+
+func (b *botSet) has(id int64) bool {
+	b.mu.RLock()
+	defer b.mu.RUnlock()
+	return b.ids[id]
+}
+
+func (b *botSet) empty() bool {
+	b.mu.RLock()
+	defer b.mu.RUnlock()
+	return len(b.ids) == 0
+}
+
 const loginTimeout = 5 * time.Minute
 
 // Manager bir nechta Telegram accountning login va kuzatuvini boshqaradi.
@@ -190,7 +219,7 @@ func (m *Manager) startWatcher(account domain.TelegramAccount, login *pendingLog
 }
 
 func (m *Manager) run(ctx context.Context, account domain.TelegramAccount, login *pendingLogin) error {
-	botID := new(atomic.Int64)
+	bots := newBotSet()
 
 	d := tg.NewUpdateDispatcher()
 	gaps := updates.New(updates.Config{
@@ -209,7 +238,7 @@ func (m *Manager) run(ctx context.Context, account domain.TelegramAccount, login
 	})
 
 	d.OnNewMessage(func(ctx context.Context, e tg.Entities, update *tg.UpdateNewMessage) error {
-		return m.onMessage(ctx, account, botID.Load(), update)
+		return m.onMessage(ctx, account, bots, update)
 	})
 
 	return client.Run(ctx, func(ctx context.Context) error {
@@ -233,7 +262,7 @@ func (m *Manager) run(ctx context.Context, account domain.TelegramAccount, login
 		}
 
 		// HUMOcardbotni topish, kerak bo'lsa /start bosish.
-		m.startHumoBot(ctx, client, botID)
+		m.startBots(ctx, client, bots)
 
 		return gaps.Run(ctx, client.API(), self.ID, updates.AuthOptions{
 			OnStart: func(ctx context.Context) {
@@ -316,11 +345,17 @@ func (m *Manager) doLogin(ctx context.Context, client *telegram.Client, account 
 	return nil
 }
 
-// startHumoBot HUMOcardbotni resolve qiladi, chat bo'sh bo'lsa /start yuboradi.
-func (m *Manager) startHumoBot(ctx context.Context, client *telegram.Client, botID *atomic.Int64) {
-	resolved, err := client.API().ContactsResolveUsername(ctx, &tg.ContactsResolveUsernameRequest{Username: humoBotUsername})
+// startBots har bir bank botini resolve qiladi, chat bo'sh bo'lsa /start yuboradi.
+func (m *Manager) startBots(ctx context.Context, client *telegram.Client, bots *botSet) {
+	for _, username := range cardBotUsernames {
+		m.startBot(ctx, client, bots, username)
+	}
+}
+
+func (m *Manager) startBot(ctx context.Context, client *telegram.Client, bots *botSet, username string) {
+	resolved, err := client.API().ContactsResolveUsername(ctx, &tg.ContactsResolveUsernameRequest{Username: username})
 	if err != nil {
-		m.log.Warn("HUMOcardbot topilmadi", zap.Error(err))
+		m.log.Warn("bot topilmadi", zap.String("bot", username), zap.Error(err))
 		return
 	}
 	var bot *tg.User
@@ -331,10 +366,11 @@ func (m *Manager) startHumoBot(ctx context.Context, client *telegram.Client, bot
 		}
 	}
 	if bot == nil {
-		m.log.Warn("HUMOcardbot user sifatida topilmadi")
+		m.log.Warn("bot user sifatida topilmadi", zap.String("bot", username))
 		return
 	}
-	botID.Store(bot.ID)
+	bots.add(bot.ID)
+	m.log.Info("bot kuzatuvga olindi", zap.String("bot", username), zap.Int64("id", bot.ID))
 
 	peer := &tg.InputPeerUser{UserID: bot.ID, AccessHash: bot.AccessHash}
 	// Chatda tarix bormi tekshiramiz — bo'sh bo'lsa /start bosamiz.
@@ -343,7 +379,7 @@ func (m *Manager) startHumoBot(ctx context.Context, client *telegram.Client, bot
 		if _, err := sender.To(peer).Text(ctx, "/start"); err != nil {
 			m.log.Warn("/start yuborilmadi", zap.Error(err))
 		} else {
-			m.log.Info("HUMOcardbotga /start yuborildi")
+			m.log.Info("/start yuborildi", zap.String("bot", username))
 		}
 	}
 }
@@ -365,7 +401,7 @@ func (m *Manager) chatIsEmpty(ctx context.Context, client *telegram.Client, peer
 }
 
 // onMessage HUMOcardbotdan kelgan to'lov xabarini qayta ishlaydi.
-func (m *Manager) onMessage(ctx context.Context, account domain.TelegramAccount, botID int64, update *tg.UpdateNewMessage) error {
+func (m *Manager) onMessage(ctx context.Context, account domain.TelegramAccount, bots *botSet, update *tg.UpdateNewMessage) error {
 	msg, ok := update.Message.(*tg.Message)
 	if !ok {
 		return nil
@@ -376,8 +412,8 @@ func (m *Manager) onMessage(ctx context.Context, account domain.TelegramAccount,
 	}
 
 	senderID := senderOf(msg)
-	if botID != 0 && senderID != botID {
-		return nil // faqat HUMOcardbotdan kelgan xabarlar
+	if !bots.empty() && !bots.has(senderID) {
+		return nil // faqat bank botlaridan kelgan xabarlar
 	}
 
 	res := usecase.ParseTopUp(text, m.log)

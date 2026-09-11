@@ -2,6 +2,22 @@ import { useEffect, useState } from 'react'
 import { api } from '../../api'
 import { formatCardNumber, rawCard } from '../../format'
 
+// Karta tizimi — raqam prefiksidan server aniqlaydi (9860 Humo, 8600/5614 Uzcard).
+const CARD_TYPES = {
+  humo: { label: 'HUMO', cls: 'bg-cyan-500/15 text-cyan-300 ring-cyan-500/30' },
+  uzcard: { label: 'UZCARD', cls: 'bg-emerald-500/15 text-emerald-300 ring-emerald-500/30' },
+  other: { label: 'BOSHQA', cls: 'bg-zinc-700/40 text-zinc-300 ring-zinc-600/40' },
+}
+
+export function CardTypeBadge({ type }) {
+  const t = CARD_TYPES[type] || CARD_TYPES.other
+  return (
+    <span className={`inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-bold tracking-wider ring-1 ${t.cls}`}>
+      {t.label}
+    </span>
+  )
+}
+
 function formatDate(str) {
   if (!str) return ''
   try {
@@ -82,7 +98,7 @@ export default function Cards() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-bold text-zinc-100 tracking-tight">Kartalar</h1>
-          <p className="text-zinc-400 text-sm mt-1">Ulangan Humo kartalar</p>
+          <p className="text-zinc-400 text-sm mt-1">Ulangan Humo va Uzcard kartalar</p>
         </div>
         <button
           onClick={() => { setShowForm(!showForm); setFormError('') }}
@@ -207,9 +223,12 @@ export default function Cards() {
                     </svg>
                   </div>
                   <div className="min-w-0">
-                    <p className="text-zinc-100 text-sm font-medium font-mono">
-                      {maskNumber(card.number)}
-                    </p>
+                    <div className="flex items-center gap-2">
+                      <p className="text-zinc-100 text-sm font-medium font-mono">
+                        {maskNumber(card.number)}
+                      </p>
+                      <CardTypeBadge type={card.type} />
+                    </div>
                     <p className="text-zinc-500 text-xs">{card.owner_name}</p>
                   </div>
                 </div>

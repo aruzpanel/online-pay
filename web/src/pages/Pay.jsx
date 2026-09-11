@@ -205,7 +205,11 @@ export default function Pay() {
             <div className="bg-zinc-950/60 border border-zinc-800 rounded-xl p-4">
               <div className="flex items-center justify-between gap-3 mb-3">
                 <div className="min-w-0">
-                  <p className="text-zinc-500 text-xs mb-1">Karta raqami</p>
+                  <p className="text-zinc-500 text-xs mb-1">
+                    Karta raqami
+                    {info.card_type === 'humo' && <span className="ml-2 rounded bg-cyan-500/15 px-1.5 py-0.5 text-[10px] font-bold tracking-wider text-cyan-300 ring-1 ring-cyan-500/30">HUMO</span>}
+                    {info.card_type === 'uzcard' && <span className="ml-2 rounded bg-emerald-500/15 px-1.5 py-0.5 text-[10px] font-bold tracking-wider text-emerald-300 ring-1 ring-emerald-500/30">UZCARD</span>}
+                  </p>
                   <p className="text-zinc-100 font-mono text-base tracking-wide break-all">{formatCard(info.card_number, info.card_last4)}</p>
                 </div>
                 {info.card_number && <CopyButton value={String(info.card_number).replace(/\s/g, '')} label="Karta raqamini nusxalash" />}

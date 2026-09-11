@@ -3,6 +3,7 @@ package domain
 import (
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -65,13 +66,28 @@ type Card struct {
 	Number            string    `json:"number,omitempty"`     // to'liq carta raqami
 	Last4             string    `json:"last4"`                // raqamdan ajratiladi (Telegram xabariga moslash uchun)
 	OwnerName         string    `json:"owner_name,omitempty"` // carta egasining ismi
+	Type              string    `json:"type"`                 // "humo" | "uzcard" | "other" — raqam prefiksidan
 	CreatedAt         time.Time `json:"created_at"`
 }
 
+// CardType carta raqamining prefiksidan tizimni aniqlaydi. Humo 9860 bilan,
+// Uzcard 8600 yoki 5614 (co-badge) bilan boshlanadi.
+func CardType(number string) string {
+	n := strings.ReplaceAll(number, " ", "")
+	switch {
+	case strings.HasPrefix(n, "9860"):
+		return "humo"
+	case strings.HasPrefix(n, "8600"), strings.HasPrefix(n, "5614"):
+		return "uzcard"
+	default:
+		return "other"
+	}
+}
+
 type Transaction struct {
-	ID            int64     `json:"id"`
-	CardID        int64     `json:"card_id"`
-	Amount        Tiyin     `json:"amount"` // tiyinda saqlanadi, JSON'da so'm (o'nlik)
+	ID              int64     `json:"id"`
+	CardID          int64     `json:"card_id"`
+	Amount          Tiyin     `json:"amount"`           // tiyinda saqlanadi, JSON'da so'm (o'nlik)
 	Status          bool      `json:"status"`           // true=active(ochiq), false=yopilgan
 	WebhookStatus   bool      `json:"webhook_status"`   // webhook yetkazildimi
 	WebhookAttempts int       `json:"webhook_attempts"` // nechi marta urinilgan
@@ -126,10 +142,10 @@ type WebhookLog struct {
 	CardID        int64     `json:"card_id"`
 	Action        string    `json:"action"` // confirm | cancel
 	URL           string    `json:"url"`
-	Amount        Tiyin     `json:"amount"` // tiyinda saqlanadi, JSON'da so'm (o'nlik)
-	Attempts      int       `json:"attempts"`     // jami urinishlar (1..3)
-	Success       bool      `json:"success"`      // oxir-oqibat yetkazildimi
-	StatusCode    int       `json:"status_code"`  // oxirgi HTTP javob kodi
+	Amount        Tiyin     `json:"amount"`      // tiyinda saqlanadi, JSON'da so'm (o'nlik)
+	Attempts      int       `json:"attempts"`    // jami urinishlar (1..3)
+	Success       bool      `json:"success"`     // oxir-oqibat yetkazildimi
+	StatusCode    int       `json:"status_code"` // oxirgi HTTP javob kodi
 	Error         string    `json:"error,omitempty"`
 	CreatedAt     time.Time `json:"created_at"`
 }

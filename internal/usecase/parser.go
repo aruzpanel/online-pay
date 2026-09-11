@@ -19,12 +19,24 @@ type TopUpResult struct {
 }
 
 // toNumber summani tiyinda qaytaradi (1 so'm = 100 tiyin), kasr (tiyin) qismni
-// saqlab: "3 300 000,00" -> 330000000, "1.000,01" -> 100001.
+// saqlab. Ikki format keladi: HUMOcardbot "3.300.000,00" (nuqta — minglik,
+// vergul — o'nlik) va CardXabarBot "542 400.00" (bo'shliq — minglik, nuqta —
+// o'nlik). O'nlik ajratuvchi — oxiridagi, ortidan aynan 2 raqam kelgan belgi;
+// qolgan hamma nuqta/vergul/bo'shliq minglik ajratuvchi sifatida tashlanadi.
 func toNumber(amount string, log *zap.Logger) (int64, bool) {
-	// Minglik ajratuvchilar (nuqta yoki bo'shliq) olib tashlanadi,
-	// vergul o'nlik nuqtaga aylantiriladi: "3 300 000,00" -> "3300000.00".
-	normalized := strings.NewReplacer(".", "", " ", "", ",", ".").Replace(amount)
-	whole, frac, _ := strings.Cut(normalized, ".")
+	amount = strings.TrimSpace(amount)
+	var whole, frac string
+	if n := len(amount); n > 3 && (amount[n-3] == ',' || amount[n-3] == '.') {
+		whole, frac = amount[:n-3], amount[n-2:]
+	} else {
+		whole = amount
+	}
+	whole = strings.NewReplacer(".", "", " ", "", ",", "").Replace(whole)
+	normalized := whole
+	if frac != "" {
+		normalized += "." + frac
+	}
+	whole, frac, _ = strings.Cut(normalized, ".")
 	som, err := strconv.ParseInt(whole, 10, 64)
 	if err != nil {
 		return 0, false
@@ -46,11 +58,12 @@ func toNumber(amount string, log *zap.Logger) (int64, bool) {
 }
 
 var (
-	// To'ldirish so'zini izlash (case-insensitive). Apostrof turli xil
-	// bo'lishi mumkin: ' ’ ‘ ` ʻ ´ yoki umuman bo'lmasligi ham mumkin.
-	reTopUpWord = regexp.MustCompile(`(?i)To['’‘` + "`" + `ʻ´]?ldirish`)
-	// ➕ 3.300.000,00 UZS  yoki  ➕ 3 300 000,00 UZS
-	reAmount = regexp.MustCompile(`➕\s*([\d.\s]+,\d{2})\s*([A-Z]{3})`)
+	// Kirim operatsiyasi so'zi (case-insensitive). HUMOcardbot: "To'ldirish"
+	// (apostrof turlicha: ' ’ ‘ ` ʻ ´ yoki yo'q). CardXabarBot: "Perevod na
+	// kartu" (lotin yoki kirill).
+	reTopUpWord = regexp.MustCompile(`(?i)To['’‘` + "`" + `ʻ´]?ldirish|Perevod na kartu|Перевод на карту|Пополнение`)
+	// ➕ 3.300.000,00 UZS  ·  ➕ 3 300 000,00 UZS  ·  ➕ 542 400.00 UZS
+	reAmount = regexp.MustCompile(`➕\s*(\d[\d.,\s]*[.,]\d{2})\s*([A-Z]{3})`)
 	// 💳 HUMOCARD *7159  (oxirgi 4 raqam)
 	reCard = regexp.MustCompile(`\*\s*(\d{4})`)
 )
