@@ -29,7 +29,7 @@ export default function Login() {
     <div className="min-h-screen bg-zinc-950 flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <Link to="/" className="text-sky-400 font-bold text-xl tracking-tight">Paycue</Link>
+          <Link to="/" className="text-sky-400 font-bold text-xl tracking-tight">Online Pay</Link>
           <h1 className="text-zinc-100 text-2xl font-bold mt-4 mb-1">Kirish</h1>
           <p className="text-zinc-500 text-sm">Hisobingizga kiring</p>
         </div>

@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/UzStack/paycue/internal/domain"
-	"github.com/UzStack/paycue/internal/repository"
+	"github.com/aruzpanel/online-pay/internal/domain"
+	"github.com/aruzpanel/online-pay/internal/repository"
 )
 
 type ctxKey string

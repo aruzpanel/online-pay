@@ -73,7 +73,7 @@ func runTUI(a *app) {
 		if a.c.token != "" {
 			tok = "bor"
 		}
-		label := fmt.Sprintf("paycue-cli  (profil: %s | token: %s)", a.profileName, tok)
+		label := fmt.Sprintf("onlinepay-cli  (profil: %s | token: %s)", a.profileName, tok)
 		idx, ok := selectMenu(label, []string{
 			"Ro'yxatdan o'tish (register)",
 			"Kirish (login)",

@@ -1,4 +1,4 @@
-// AI dasturchiga beriladigan Paycue integratsiya prompti.
+// AI dasturchiga beriladigan Online Pay integratsiya prompti.
 // Foydalanuvchiga ko'rsatilmaydi — faqat clipboardga nusxalanadi.
 
 export const REPO = 'https://github.com/UzStack/paycue'
@@ -6,15 +6,15 @@ export const REPO = 'https://github.com/UzStack/paycue'
 export function buildIntegrationPrompt({ base, token, secret, webhookUrl }) {
   const secretLine = secret
     ? `- Webhook secret (X-API-Key, maxfiy): ${secret}`
-    : `- Webhook secret: hali sozlanmagan — avval Paycue dashboardidan webhook URL kiriting, so'ng secret paydo bo'ladi.`
+    : `- Webhook secret: hali sozlanmagan — avval Online Pay dashboardidan webhook URL kiriting, so'ng secret paydo bo'ladi.`
   const webhookLine = webhookUrl
-    ? `- Mening webhook URL'im (Paycue shu yerga POST yuboradi): ${webhookUrl}`
+    ? `- Mening webhook URL'im (Online Pay shu yerga POST yuboradi): ${webhookUrl}`
     : `- Webhook URL: hali sozlanmagan.`
 
-  return `Sen mening dasturimga Paycue to'lov tizimini integratsiya qiladigan tajribali backend dasturchisan.
+  return `Sen mening dasturimga Online Pay to'lov tizimini integratsiya qiladigan tajribali backend dasturchisan.
 
-# Paycue nima
-Paycue — Humo kartaga tushgan to'lovlarni Telegram orqali real vaqtda aniqlab, webhook
+# Online Pay nima
+Online Pay — Humo kartaga tushgan to'lovlarni Telegram orqali real vaqtda aniqlab, webhook
 orqali mening serverimga xabar beradigan to'lov tizimi. Rasmiy to'lov shlyuzi (Payme/Click)
 yoki merchant shartnoma talab qilmaydi. To'liq API hujjati va manba kodi: ${REPO}
 
@@ -27,11 +27,11 @@ ${secretLine}
 ${webhookLine}
 
 # Men xohlagan to'lov oqimi
-1. Mijoz buyurtma bersa, backendim Paycue'da transaction yaratadi.
-2. Paycue band bo'lmagan NOYOB summa va pay_url qaytaradi.
+1. Mijoz buyurtma bersa, backendim Online Pay'da transaction yaratadi.
+2. Online Pay band bo'lmagan NOYOB summa va pay_url qaytaradi.
 3. Mijozga pay_url havolasini ko'rsataman (yoki o'z UI'mda summa + kartani ko'rsataman).
 4. Mijoz AYNAN shu summani ko'rsatilgan Humo kartaga o'tkazadi.
-5. Pul tushganda Paycue mening webhook URL'imga POST yuboradi → men buyurtmani tasdiqlayman.
+5. Pul tushganda Online Pay mening webhook URL'imga POST yuboradi → men buyurtmani tasdiqlayman.
 
 # Kerakli endpointlar
 
@@ -43,14 +43,14 @@ Javob (data): { "amount": <to'lanadigan NOYOB summa, so'mda o'nlik — masalan 1
 MUHIM: mijozdan aynan javobdagi "amount" ni so'ra (tiyingacha aniq) — summa noyob, to'lov aynan shu orqali aniqlanadi.
 
 ## 2) Webhook (men qabul qilaman)
-Paycue to'lov tushganda yoki muddati o'tganda mening URL'imga POST yuboradi:
+Online Pay to'lov tushganda yoki muddati o'tganda mening URL'imga POST yuboradi:
   body: { "action": "confirm" | "cancel", "amount": <so'mda o'nlik, masalan 1000.01>, "card_id": int, "transaction_id": string }
   header: X-API-Key: <secret>
 Mening webhook handlerim shularni qilsin:
 - Kelgan X-API-Key ni yuqoridagi secret bilan solishtirib tekshirsin (mos kelmasa 403 qaytarib rad etsin — soxta so'rovlardan himoya).
 - transaction_id orqali tegishli buyurtmani topsin.
 - action="confirm" bo'lsa buyurtmani "to'langan" deb belgilasin; action="cancel" bo'lsa "bekor qilingan".
-- Javobda 200 status va {"ok": true} qaytarsin. Aks holda Paycue 3 martagacha qayta uradi.
+- Javobda 200 status va {"ok": true} qaytarsin. Aks holda Online Pay 3 martagacha qayta uradi.
 
 ## 3) Pay sahifa ma'lumoti (ixtiyoriy — o'z UI'ng uchun)
 GET ${base}/api/pay/{transaction_id}   (auth shart emas)
@@ -59,7 +59,7 @@ state: active | confirmed | cancelled | expired. Bu bilan o'z to'lov sahifangda 
 
 # Vazifa
 Mening dasturimga (texnologiya stekini mendan so'ra yoki mavjud kodimni tahlil qil) quyidagilarni qo'sh:
-1. Buyurtma yaratilganda Paycue'da transaction yaratadigan funksiya/servis.
+1. Buyurtma yaratilganda Online Pay'da transaction yaratadigan funksiya/servis.
 2. Mijozga to'lov summasi (javobdagi amount) va pay_url ni ko'rsatadigan oqim.
 3. Webhook qabul qiluvchi endpoint — X-API-Key tekshiruvi va {"ok":true} javobi bilan.
 4. Webhook kelganda buyurtma statusini yangilab, biznes-logikani (masalan mahsulotni berish) ishga tushir.

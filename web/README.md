@@ -1,6 +1,6 @@
-# Paycue Web
+# Online Pay Web
 
-Paycue Go backend uchun React frontend (Vite + Tailwind).
+Online Pay Go backend uchun React frontend (Vite + Tailwind).
 
 ## Ishga tushirish
 

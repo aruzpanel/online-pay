@@ -153,7 +153,7 @@ export default function Pay() {
     <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col items-center justify-center px-4 py-10">
       {/* Brand */}
       <div className="flex items-center gap-2 mb-6">
-        <span className="text-sky-400 font-bold text-lg tracking-tight">Paycue</span>
+        <span className="text-sky-400 font-bold text-lg tracking-tight">Online Pay</span>
       </div>
 
       <div className="w-full max-w-md">
@@ -255,7 +255,7 @@ export default function Pay() {
         </div>
 
         <p className="text-center text-zinc-600 text-xs mt-5">
-          Xavfsiz to'lov · <span className="text-zinc-500">Paycue</span>
+          Xavfsiz to'lov · <span className="text-zinc-500">Online Pay</span>
         </p>
       </div>
     </div>

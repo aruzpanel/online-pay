@@ -32,7 +32,17 @@ type cliConfig struct {
 
 func configDir() string {
 	home, _ := os.UserHomeDir()
-	return filepath.Join(home, ".config", "paycue")
+	dir := filepath.Join(home, ".config", "onlinepay")
+	// Before the rename the CLI kept its profiles in ~/.config/paycue. Until
+	// something has been saved under the new name, keep using them there
+	// rather than greeting an existing install with an empty profile list.
+	if _, err := os.Stat(dir); os.IsNotExist(err) {
+		legacy := filepath.Join(home, ".config", "paycue")
+		if _, err := os.Stat(legacy); err == nil {
+			return legacy
+		}
+	}
+	return dir
 }
 
 func configPath() string { return filepath.Join(configDir(), "config.json") }
@@ -128,8 +138,8 @@ func (a *app) useProfile(name string) {
 	a.profileName = name
 	prof := a.cfg.Profiles[name]
 	a.c = &client{
-		api:   firstNonEmpty(a.apiFlag, prof.API, os.Getenv("PAYCUE_API"), defaultAPIAddr),
-		token: firstNonEmpty(a.tokenFlag, prof.Token, os.Getenv("PAYCUE_TOKEN")),
+		api:   firstNonEmpty(a.apiFlag, prof.API, firstNonEmpty(os.Getenv("ONLINEPAY_API"), os.Getenv("PAYCUE_API")), defaultAPIAddr),
+		token: firstNonEmpty(a.tokenFlag, prof.Token, firstNonEmpty(os.Getenv("ONLINEPAY_TOKEN"), os.Getenv("PAYCUE_TOKEN"))),
 	}
 }
 
@@ -144,8 +154,8 @@ func firstNonEmpty(vals ...string) string {
 
 func main() {
 	var (
-		apiFlag     = flag.String("api", "", "API manzili (profil/PAYCUE_API ustidan)")
-		tokenFlag   = flag.String("token", "", "token (profil/PAYCUE_TOKEN ustidan)")
+		apiFlag     = flag.String("api", "", "API manzili (profil/ONLINEPAY_API ustidan)")
+		tokenFlag   = flag.String("token", "", "token (profil/ONLINEPAY_TOKEN ustidan)")
 		profileFlag = flag.String("profile", "", "ishlatiladigan profil nomi (default: current)")
 	)
 	flag.Parse()
@@ -161,8 +171,8 @@ func main() {
 		apiFlag:     *apiFlag,
 		tokenFlag:   *tokenFlag,
 		c: &client{
-			api:   firstNonEmpty(*apiFlag, prof.API, os.Getenv("PAYCUE_API"), defaultAPIAddr),
-			token: firstNonEmpty(*tokenFlag, prof.Token, os.Getenv("PAYCUE_TOKEN")),
+			api:   firstNonEmpty(*apiFlag, prof.API, firstNonEmpty(os.Getenv("ONLINEPAY_API"), os.Getenv("PAYCUE_API")), defaultAPIAddr),
+			token: firstNonEmpty(*tokenFlag, prof.Token, firstNonEmpty(os.Getenv("ONLINEPAY_TOKEN"), os.Getenv("PAYCUE_TOKEN"))),
 		},
 	}
 
@@ -178,7 +188,7 @@ func main() {
 	var err error
 	switch cmd {
 	case "version":
-		fmt.Println("paycue-cli", VERSION)
+		fmt.Println("onlinepay-cli", VERSION)
 		return
 	case "profile":
 		err = cmdProfile(a, rest)
@@ -205,13 +215,13 @@ func main() {
 }
 
 func usage() {
-	fmt.Println(`paycue-cli — paycue API client
+	fmt.Println(`onlinepay-cli — onlinepay API client
 
 Argumentsiz ishga tushirilsa interaktiv menu (TUI) ochiladi.
 
 Global flaglar:
-  --api URL       API manzili (yoki PAYCUE_API, yoki profil)
-  --token TOKEN   Token (yoki PAYCUE_TOKEN, yoki profil)
+  --api URL       API manzili (yoki ONLINEPAY_API, yoki profil)
+  --token TOKEN   Token (yoki ONLINEPAY_TOKEN, yoki profil)
   --profile NAME  Ishlatiladigan profil (default: joriy profil)
 
 Profil (bir nechta account):

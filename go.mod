@@ -1,4 +1,4 @@
-module github.com/UzStack/paycue
+module github.com/aruzpanel/online-pay
 
 go 1.24.0
 

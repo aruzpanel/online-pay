@@ -49,7 +49,7 @@ function TokenCard() {
       <div className="flex items-center justify-between gap-3 mb-3 px-3 py-2.5 bg-zinc-950 border border-zinc-800 rounded-md">
         <div className="min-w-0">
           <p className="text-zinc-200 text-sm font-medium">AI integratsiya prompti</p>
-          <p className="text-zinc-500 text-xs mt-0.5">Nusxalab AI dasturchiga (Claude/ChatGPT/Cursor) bering — Paycue to'lovni integratsiya qiladi.</p>
+          <p className="text-zinc-500 text-xs mt-0.5">Nusxalab AI dasturchiga (Claude/ChatGPT/Cursor) bering — Online Pay to'lovni integratsiya qiladi.</p>
         </div>
         <button
           onClick={copyPrompt}

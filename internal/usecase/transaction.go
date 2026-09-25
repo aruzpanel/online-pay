@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"errors"
 
-	"github.com/UzStack/paycue/internal/repository"
+	"github.com/aruzpanel/online-pay/internal/repository"
 )
 
 // maxIncrement bitta carta uchun bo'sh summa qidirishda urinishlar chegarasi (tiyinda).

@@ -122,28 +122,28 @@ const USE_CASES = [
 
 const FAQ = [
   {
-    q: 'Paycue qanday ishlaydi?',
-    a: "Telegram accountingiz @HUMOcardbot orqali kartaga tushgan to'lovlarni real vaqtda kuzatadi. To'lov aniqlanganda Paycue sizning webhook URL'ingizga POST so'rov yuboradi — tizimingiz buyurtmani avtomatik tasdiqlaydi.",
+    q: 'Online Pay qanday ishlaydi?',
+    a: "Telegram accountingiz @HUMOcardbot orqali kartaga tushgan to'lovlarni real vaqtda kuzatadi. To'lov aniqlanganda Online Pay sizning webhook URL'ingizga POST so'rov yuboradi — tizimingiz buyurtmani avtomatik tasdiqlaydi.",
   },
   {
     q: 'To\'lov tizimiga (Payme/Click) integratsiya kerakmi?',
-    a: "Yo'q. Paycue rasmiy to'lov shlyuzini, shartnoma yoki merchant akkauntni talab qilmaydi. Oddiy Humo plastik kartasi va Telegram accounti yetarli.",
+    a: "Yo'q. Online Pay rasmiy to'lov shlyuzini, shartnoma yoki merchant akkauntni talab qilmaydi. Oddiy Humo plastik kartasi va Telegram accounti yetarli.",
   },
   {
     q: 'Telegram accountni ulash xavfsizmi?',
-    a: "Ha. Paycue to'liq open source — kodni o'zingiz ko'rishingiz mumkin. Barcha ma'lumotlar o'z serveringizda qoladi, Telegram session fayllari ham sizda saqlanadi, uchinchi tomonga hech narsa yuborilmaydi.",
+    a: "Ha. Online Pay to'liq open source — kodni o'zingiz ko'rishingiz mumkin. Barcha ma'lumotlar o'z serveringizda qoladi, Telegram session fayllari ham sizda saqlanadi, uchinchi tomonga hech narsa yuborilmaydi.",
   },
   {
     q: 'Bir vaqtda ikki kishi bir xil summa to\'lasa nima bo\'ladi?',
-    a: "Paycue har bir transaction uchun band bo'lmagan noyob summani (masalan 20001, 20002) ajratadi. Shu sababli to'lovlar bir-biriga aralashmaydi va to'g'ri tranzaksiyaga bog'lanadi.",
+    a: "Online Pay har bir transaction uchun band bo'lmagan noyob summani (masalan 20001, 20002) ajratadi. Shu sababli to'lovlar bir-biriga aralashmaydi va to'g'ri tranzaksiyaga bog'lanadi.",
   },
   {
     q: 'Bir nechta karta ishlatsam bo\'ladimi?',
-    a: "Ha. Bir nechta Telegram account va Humo karta qo'shishingiz mumkin. Karta ko'rsatmasangiz, Paycue eng kam yuklangan kartani avtomatik tanlab, yukni teng taqsimlaydi.",
+    a: "Ha. Bir nechta Telegram account va Humo karta qo'shishingiz mumkin. Karta ko'rsatmasangiz, Online Pay eng kam yuklangan kartani avtomatik tanlab, yukni teng taqsimlaydi.",
   },
   {
-    q: 'Paycue bepulmi?',
-    a: "Ha, Paycue open source. O'z serveringizda bepul ishga tushirasiz. Bitta server bir nechta foydalanuvchiga (multi-tenant) xizmat qiladi.",
+    q: 'Online Pay bepulmi?',
+    a: "Ha, Online Pay open source. O'z serveringizda bepul ishga tushirasiz. Bitta server bir nechta foydalanuvchiga (multi-tenant) xizmat qiladi.",
   },
 ]
 
@@ -193,7 +193,7 @@ export default function Landing() {
       {/* Nav */}
       <nav className="sticky top-0 z-50 border-b border-zinc-800/60 bg-zinc-950/90 backdrop-blur-sm">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
-          <span className="text-sky-400 font-bold text-lg tracking-tight">Paycue</span>
+          <span className="text-sky-400 font-bold text-lg tracking-tight">Online Pay</span>
           {loggedIn ? (
             <Link
               to="/dashboard"
@@ -365,7 +365,7 @@ export default function Landing() {
             Tez-tez beriladigan savollar
           </h2>
           <p className="text-zinc-400 text-base max-w-lg">
-            Paycue haqida eng ko'p so'raladigan savollar va javoblar.
+            Online Pay haqida eng ko'p so'raladigan savollar va javoblar.
           </p>
         </div>
 
@@ -477,9 +477,9 @@ export default function Landing() {
       {/* Footer */}
       <footer className="border-t border-zinc-800/60">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <span className="text-sky-400 font-bold tracking-tight">Paycue</span>
+          <span className="text-sky-400 font-bold tracking-tight">Online Pay</span>
           <p className="text-zinc-500 text-xs">
-            &copy; 2026 Paycue. Telegram + Humo to'lov integratsiyasi.
+            &copy; 2026 Online Pay. Telegram + Humo to'lov integratsiyasi.
           </p>
           <div className="flex gap-4 text-xs text-zinc-500">
             <Link to="/login" className="hover:text-zinc-300 transition-colors">Kirish</Link>

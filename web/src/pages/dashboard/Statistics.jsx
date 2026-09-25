@@ -64,7 +64,7 @@ export default function Statistics() {
       <div className="flex items-center justify-between mb-6 gap-3">
         <div>
           <h1 className="text-xl font-bold text-zinc-100 tracking-tight">Statistika</h1>
-          <p className="text-zinc-400 text-sm mt-1">Barcha Paycue instance'lari bo'yicha anonim jamlanma</p>
+          <p className="text-zinc-400 text-sm mt-1">Barcha Online Pay instance'lari bo'yicha anonim jamlanma</p>
         </div>
         <button
           onClick={load}

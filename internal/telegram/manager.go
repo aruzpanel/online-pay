@@ -9,10 +9,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/UzStack/paycue/internal/config"
-	"github.com/UzStack/paycue/internal/domain"
-	"github.com/UzStack/paycue/internal/repository"
-	"github.com/UzStack/paycue/internal/usecase"
+	"github.com/aruzpanel/online-pay/internal/config"
+	"github.com/aruzpanel/online-pay/internal/domain"
+	"github.com/aruzpanel/online-pay/internal/repository"
+	"github.com/aruzpanel/online-pay/internal/usecase"
 
 	"github.com/go-faster/errors"
 	"github.com/gotd/td/session"

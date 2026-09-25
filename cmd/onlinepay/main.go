@@ -10,13 +10,13 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/UzStack/paycue/internal/config"
-	"github.com/UzStack/paycue/internal/domain"
-	"github.com/UzStack/paycue/internal/http/middleware"
-	"github.com/UzStack/paycue/internal/http/routes"
-	"github.com/UzStack/paycue/internal/repository"
-	"github.com/UzStack/paycue/internal/telegram"
-	"github.com/UzStack/paycue/internal/usecase"
+	"github.com/aruzpanel/online-pay/internal/config"
+	"github.com/aruzpanel/online-pay/internal/domain"
+	"github.com/aruzpanel/online-pay/internal/http/middleware"
+	"github.com/aruzpanel/online-pay/internal/http/routes"
+	"github.com/aruzpanel/online-pay/internal/repository"
+	"github.com/aruzpanel/online-pay/internal/telegram"
+	"github.com/aruzpanel/online-pay/internal/usecase"
 	"github.com/joho/godotenv"
 	_ "github.com/mattn/go-sqlite3"
 	"go.uber.org/zap"
@@ -34,13 +34,13 @@ func author() {
 }
 
 func printHelp() {
-	fmt.Println("Usage: paycue [options]")
+	fmt.Println("Usage: onlinepay [options]")
 	fmt.Println("Options:")
 	fmt.Println("  --help     -h   Yordam")
 	fmt.Println("  --version  -v   Versiya")
 	fmt.Println("  --author   -a   Muallif")
 	fmt.Println("")
-	fmt.Println("Telegram account, carta va webhook'lar API orqali sozlanadi (paycue-cli ga qarang).")
+	fmt.Println("Telegram account, carta va webhook'lar API orqali sozlanadi (onlinepay-cli ga qarang).")
 	os.Exit(0)
 }
 

@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/UzStack/paycue/internal/domain"
+	"github.com/aruzpanel/online-pay/internal/domain"
 	"github.com/google/uuid"
 )
 

@@ -6,13 +6,13 @@ import (
 	"os"
 	"testing"
 
-	"github.com/UzStack/paycue/internal/domain"
-	"github.com/UzStack/paycue/internal/repository"
+	"github.com/aruzpanel/online-pay/internal/domain"
+	"github.com/aruzpanel/online-pay/internal/repository"
 	_ "github.com/mattn/go-sqlite3"
 )
 
 func tdb(t *testing.T) *sql.DB {
-	f, _ := os.CreateTemp("", "paycue-*.sqlite3")
+	f, _ := os.CreateTemp("", "onlinepay-*.sqlite3")
 	f.Close()
 	t.Cleanup(func() { os.Remove(f.Name()) })
 	db, err := sql.Open("sqlite3", f.Name())
@@ -56,7 +56,7 @@ func TestCreateUpDown(t *testing.T) {
 }
 
 func TestAmountMigration(t *testing.T) {
-	f, _ := os.CreateTemp("", "paycue-mig-*.sqlite3")
+	f, _ := os.CreateTemp("", "onlinepay-mig-*.sqlite3")
 	f.Close()
 	defer os.Remove(f.Name())
 	db, _ := sql.Open("sqlite3", f.Name())

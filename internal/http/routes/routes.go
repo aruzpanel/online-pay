@@ -4,10 +4,10 @@ import (
 	"database/sql"
 	"net/http"
 
-	"github.com/UzStack/paycue/internal/config"
-	"github.com/UzStack/paycue/internal/http/handlers"
-	"github.com/UzStack/paycue/internal/http/middleware"
-	"github.com/UzStack/paycue/internal/telegram"
+	"github.com/aruzpanel/online-pay/internal/config"
+	"github.com/aruzpanel/online-pay/internal/http/handlers"
+	"github.com/aruzpanel/online-pay/internal/http/middleware"
+	"github.com/aruzpanel/online-pay/internal/telegram"
 	"go.uber.org/zap"
 )
 

@@ -10,13 +10,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/UzStack/paycue/internal/auth"
-	"github.com/UzStack/paycue/internal/config"
-	"github.com/UzStack/paycue/internal/domain"
-	"github.com/UzStack/paycue/internal/http/middleware"
-	"github.com/UzStack/paycue/internal/repository"
-	"github.com/UzStack/paycue/internal/telegram"
-	"github.com/UzStack/paycue/internal/usecase"
+	"github.com/aruzpanel/online-pay/internal/auth"
+	"github.com/aruzpanel/online-pay/internal/config"
+	"github.com/aruzpanel/online-pay/internal/domain"
+	"github.com/aruzpanel/online-pay/internal/http/middleware"
+	"github.com/aruzpanel/online-pay/internal/repository"
+	"github.com/aruzpanel/online-pay/internal/telegram"
+	"github.com/aruzpanel/online-pay/internal/usecase"
 	"go.uber.org/zap"
 )
 

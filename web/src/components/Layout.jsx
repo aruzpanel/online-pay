@@ -129,7 +129,7 @@ export default function Layout() {
       >
         {/* Logo */}
         <div className="flex items-center gap-2 px-5 h-16 border-b border-zinc-800 shrink-0">
-          <span className="text-sky-400 font-bold text-lg tracking-tight">Paycue</span>
+          <span className="text-sky-400 font-bold text-lg tracking-tight">Online Pay</span>
         </div>
 
         {/* Nav */}
@@ -174,7 +174,7 @@ export default function Layout() {
       <div className="flex-1 flex flex-col min-w-0">
         {/* Mobile topbar */}
         <header className="sticky top-0 z-10 flex items-center justify-between px-4 h-16 bg-zinc-950 border-b border-zinc-800 lg:hidden">
-          <span className="text-sky-400 font-bold text-lg tracking-tight">Paycue</span>
+          <span className="text-sky-400 font-bold text-lg tracking-tight">Online Pay</span>
           <button
             onClick={() => setOpen(true)}
             className="p-2 rounded-md text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 transition-colors"

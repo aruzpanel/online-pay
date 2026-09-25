@@ -1,6 +1,16 @@
-# Paycue
+# Online Pay
 
-Paycue — to'lovlarni avtomatlashtirish uchun open source **SaaS** dastur. To'lov
+> **Online Pay** — DANAT SHOP va UZBOOST uchun ichki nusxa. Asosi
+> [UzStack/paycue](https://github.com/UzStack/paycue), muallifi
+> [Azamov Samandar](https://t.me/Azamov_Samandar); uning commit tarixi shu
+> repoda to'liq saqlangan. Asl loyihada LICENSE fayli yo'q, shuning uchun bu
+> repo yopiq (private) saqlanadi.
+>
+> Pastdagi `install.sh` / `curl … | bash` bo'limlari asl loyihaniki: ular
+> asl relizlarni `paycue` nomi bilan o'rnatadi. Bizning serverga chiqarish —
+> [README.deploy.md](README.deploy.md).
+
+Online Pay — to'lovlarni avtomatlashtirish uchun open source **SaaS** dastur. To'lov
 tizimlariga integratsiya qilmasdan, Humo kartangizga tushgan to'lovlarni Telegram
 orqali aniqlab, sizning API'ngizga `webhook` yuboradi.
 
@@ -24,8 +34,8 @@ cartalarini qo'shadi va webhook manzilini sozlaydi.
 
 ## Komponentlar
 
-- **`paycue`** — API server (Telegram watcher, worker, webhook).
-- **`paycue-cli`** — API client (terminal). To'liq API orqali ishlaydi, dastur ichiga kirmaydi.
+- **`onlinepay`** — API server (Telegram watcher, worker, webhook).
+- **`onlinepay-cli`** — API client (terminal). To'liq API orqali ishlaydi, dastur ichiga kirmaydi.
 
 ## Kerakli narsalar
 
@@ -43,12 +53,12 @@ curl -fsSL https://raw.githubusercontent.com/UzStack/paycue/main/install.sh | su
 
 `install.sh` (Linux — server + CLI):
 - o'rnatilmagan bo'lsa — `APP_ID`/`APP_HASH` so'raydi, `.env` tayyorlaydi, oxirgi
-  releasedan binarylarni yuklaydi, systemd servisini sozlaydi, `paycue-cli`ni o'rnatadi;
+  releasedan binarylarni yuklaydi, systemd servisini sozlaydi, `onlinepay-cli`ni o'rnatadi;
 - o'rnatilgan bo'lsa — binarylarni oxirgi releasega yangilab, servisni qayta ishga tushiradi.
 
 ### Faqat CLI (macOS yoki masofaviy server uchun)
 
-Faqat `paycue-cli`ni o'rnatish (serversiz). macOS'da avtomatik shu rejim tanlanadi
+Faqat `onlinepay-cli`ni o'rnatish (serversiz). macOS'da avtomatik shu rejim tanlanadi
 (server systemd talab qiladi, macOS'da bu yo'q):
 
 ```bash
@@ -89,13 +99,13 @@ STATS_DASHBOARD=false         # hisobotlarni qabul qilib UI'da ko'rsatish (defau
 > hisobotlarni qabul qiladi va dashboardda **Statistika** sahifasini ko'rsatadi (default o'chiq).
 
 ```bash
-make build          # bin/paycue va bin/paycue-cli
-./bin/paycue        # serverni ishga tushirish
+make build          # bin/onlinepay va bin/onlinepay-cli
+./bin/onlinepay        # serverni ishga tushirish
 ```
 
 ## API integratsiya
 
-Bu — dasturchi boshqaradigan to'liq API. `paycue-cli` ham aynan shu
+Bu — dasturchi boshqaradigan to'liq API. `onlinepay-cli` ham aynan shu
 endpointlarni chaqiradi, ya'ni CLI'dagi har bir buyruq quyidagi so'rovga teng.
 
 **Asoslar**
@@ -254,7 +264,7 @@ curl -X POST http://<host>:8080/api/webhook \
 ```
 
 Javobda `secret` qaytadi — dastur webhook yuborganda uni `X-API-Key` headerda
-yuboradi. Callback URL'ingizda shu kalitni tekshirib, so'rov haqiqatan paycue'dan
+yuboradi. Callback URL'ingizda shu kalitni tekshirib, so'rov haqiqatan onlinepay'dan
 kelganini bilib oling.
 
 ### Telegram account ulash
@@ -333,33 +343,33 @@ sahifasida chiqadi; transaction ro'yxatida ham har bir to'lov uchun webhook hola
 
 ## CLI
 
-`paycue-cli` ni **argumentsiz** ishga tushirsangiz interaktiv menu (TUI) ochiladi —
+`onlinepay-cli` ni **argumentsiz** ishga tushirsangiz interaktiv menu (TUI) ochiladi —
 menyularni **strelka (↑/↓) bilan** tanlab, Enter bilan tasdiqlaysiz (parol `*` bilan
 yashiriladi):
 
 ```bash
-paycue-cli            # interaktiv menu
+onlinepay-cli            # interaktiv menu
 ```
 
 Har bir amalni **ikki xil** ishlatish mumkin: interaktiv menu (TUI) yoki
 to'g'ridan-to'g'ri subcommand (skript/avtomatlashtirish uchun qulay):
 
 ```bash
-paycue-cli register --name "Ism" --email pochta@example.com [--password "parol123"]
-paycue-cli login --login pochta@example.com --password "parol123"   # parol bilan ro'yxatdan o'tgan bo'lsa
-paycue-cli webhook                              # joriy webhookni ko'rish
-paycue-cli webhook --url https://example.com/hook   # webhook sozlash
-paycue-cli telegram connect --phone +99890...   # interaktiv: kod va 2FA ni so'raydi
+onlinepay-cli register --name "Ism" --email pochta@example.com [--password "parol123"]
+onlinepay-cli login --login pochta@example.com --password "parol123"   # parol bilan ro'yxatdan o'tgan bo'lsa
+onlinepay-cli webhook                              # joriy webhookni ko'rish
+onlinepay-cli webhook --url https://example.com/hook   # webhook sozlash
+onlinepay-cli telegram connect --phone +99890...   # interaktiv: kod va 2FA ni so'raydi
 # yoki skriptbop (non-interaktiv) ikki qadam:
-paycue-cli telegram send-code --phone +99890...               # -> telegram_account_id
-paycue-cli telegram verify --account 1 --code 12345 [--password 2FA]
-paycue-cli telegram list
-paycue-cli card add --account 1 --number "8600 1234 5678 7159" --owner "Samandar"
-paycue-cli card list
-paycue-cli transaction create --amount 20000            # carta avtomatik tanlanadi
-paycue-cli transaction create --card 1 --amount 20000   # aniq carta
-paycue-cli transaction list                             # holati bilan ro'yxat
-paycue-cli transaction delete --id 5
+onlinepay-cli telegram send-code --phone +99890...               # -> telegram_account_id
+onlinepay-cli telegram verify --account 1 --code 12345 [--password 2FA]
+onlinepay-cli telegram list
+onlinepay-cli card add --account 1 --number "8600 1234 5678 7159" --owner "Samandar"
+onlinepay-cli card list
+onlinepay-cli transaction create --amount 20000            # carta avtomatik tanlanadi
+onlinepay-cli transaction create --card 1 --amount 20000   # aniq carta
+onlinepay-cli transaction list                             # holati bilan ro'yxat
+onlinepay-cli transaction delete --id 5
 ```
 
 `GET /api/transactions` har bir transactionni carta ma'lumoti (to'liq `card_number`,
@@ -374,26 +384,26 @@ paycue-cli transaction delete --id 5
 
 ### Bir nechta account (profillar)
 
-CLI bir nechta paycue accountni profillar orqali boshqaradi. Har profil o'z
-`api` + `token`ini `~/.config/paycue/config.json`da saqlaydi.
+CLI bir nechta onlinepay accountni profillar orqali boshqaradi. Har profil o'z
+`api` + `token`ini `~/.config/onlinepay/config.json`da saqlaydi.
 
 ```bash
-paycue-cli register --name "Ali" --email ali@x.com --profile ali   # 'ali' profili
-paycue-cli register --name "Vali" --phone +998... --profile vali   # 'vali' profili
+onlinepay-cli register --name "Ali" --email ali@x.com --profile ali   # 'ali' profili
+onlinepay-cli register --name "Vali" --phone +998... --profile vali   # 'vali' profili
 
-paycue-cli profile list           # profillar (joriy * bilan belgilanadi)
-paycue-cli profile current        # joriy profil
-paycue-cli profile token [ali]    # profil tokenini chiqarish (default: joriy)
-paycue-cli profile use ali        # joriy profilni almashtirish
-paycue-cli profile add boss --token <token> [--api URL]   # tashqi token qo'shish
-paycue-cli profile remove vali
+onlinepay-cli profile list           # profillar (joriy * bilan belgilanadi)
+onlinepay-cli profile current        # joriy profil
+onlinepay-cli profile token [ali]    # profil tokenini chiqarish (default: joriy)
+onlinepay-cli profile use ali        # joriy profilni almashtirish
+onlinepay-cli profile add boss --token <token> [--api URL]   # tashqi token qo'shish
+onlinepay-cli profile remove vali
 
 # bitta buyruq uchun profilni almashtirmasdan tanlash:
-paycue-cli --profile vali card list
+onlinepay-cli --profile vali card list
 ```
 
 Yechim tartibi (token/api uchun): `--token`/`--api` flag → tanlangan profil →
-`PAYCUE_TOKEN`/`PAYCUE_API` env → default. Eski yagona `~/.config/paycue/token`
+`ONLINEPAY_TOKEN`/`ONLINEPAY_API` env → default. Eski yagona `~/.config/onlinepay/token`
 fayli ilk ishga tushishda avtomatik `default` profilga ko'chiriladi.
 
 ## Muhim ma'lumotlar
