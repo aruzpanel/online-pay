@@ -1,15 +1,5 @@
 # Online Pay
 
-> **Online Pay** — DANAT SHOP va UZBOOST uchun ichki nusxa. Asosi
-> [UzStack/paycue](https://github.com/UzStack/paycue), muallifi
-> [Azamov Samandar](https://t.me/Azamov_Samandar); uning commit tarixi shu
-> repoda to'liq saqlangan. Asl loyihada LICENSE fayli yo'q, shuning uchun bu
-> repo yopiq (private) saqlanadi.
->
-> Pastdagi `install.sh` / `curl … | bash` bo'limlari asl loyihaniki: ular
-> asl relizlarni `paycue` nomi bilan o'rnatadi. Bizning serverga chiqarish —
-> [README.deploy.md](README.deploy.md).
-
 Online Pay — to'lovlarni avtomatlashtirish uchun open source **SaaS** dastur. To'lov
 tizimlariga integratsiya qilmasdan, Humo kartangizga tushgan to'lovlarni Telegram
 orqali aniqlab, sizning API'ngizga `webhook` yuboradi.
@@ -17,8 +7,6 @@ orqali aniqlab, sizning API'ngizga `webhook` yuboradi.
 Bitta server bir nechta foydalanuvchiga (multi-tenant) xizmat qiladi. Har bir
 foydalanuvchi API orqali ro'yxatdan o'tadi, o'z Telegram accountini ulaydi,
 cartalarini qo'shadi va webhook manzilini sozlaydi.
-
-> Savollar bo'lsa: [@Azamov_Samandar](https://t.me/Azamov_Samandar)
 
 ## Loyiha qanday ishlaydi?
 
@@ -45,30 +33,10 @@ cartalarini qo'shadi va webhook manzilini sozlaydi.
 4. Server
 5. Telegram `APP_ID` va `APP_HASH` ([my.telegram.org](https://my.telegram.org))
 
-## Tez o'rnatish
+## Ishga tushirish
 
-```bash
-curl -fsSL https://raw.githubusercontent.com/UzStack/paycue/main/install.sh | sudo bash
-```
-
-`install.sh` (Linux — server + CLI):
-- o'rnatilmagan bo'lsa — `APP_ID`/`APP_HASH` so'raydi, `.env` tayyorlaydi, oxirgi
-  releasedan binarylarni yuklaydi, systemd servisini sozlaydi, `onlinepay-cli`ni o'rnatadi;
-- o'rnatilgan bo'lsa — binarylarni oxirgi releasega yangilab, servisni qayta ishga tushiradi.
-
-### Faqat CLI (macOS yoki masofaviy server uchun)
-
-Faqat `onlinepay-cli`ni o'rnatish (serversiz). macOS'da avtomatik shu rejim tanlanadi
-(server systemd talab qiladi, macOS'da bu yo'q):
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/UzStack/paycue/main/install.sh | sudo bash -s -- --cli-only
-```
-
-> Server **Linux**da ishlaydi (SQLite/CGO). macOS uchun faqat CLI build qilinadi —
-> u masofaviy serverga `--api` orqali ulanadi.
-
-## Qo'lda ishga tushirish
+Serverga chiqarish — [README.deploy.md](README.deploy.md).
+Qo'lda ishga tushirish:
 
 `.env` fayl (namuna `.env.example`da):
 
@@ -83,19 +51,18 @@ TRANSACTION_TIMEOUT=30
 DEBUG=false
 CORS_ORIGIN=*
 WEB_DIR=            # sozlansa, server shu papkadan web UI ni (SPA) xizmat qiladi
-STATS_URL=https://paycue.uz   # anonim statistika yuboriladigan kollektor
-STATS_REPORT=true             # anonim foydalanish statistikasini yuborish (false bilan o'chadi)
+STATS_URL=                    # hisobot kollektori (bo'sh — yuborilmaydi)
+STATS_REPORT=false            # anonim statistikani yuborish (faqat STATS_URL bilan)
 STATS_DASHBOARD=false         # hisobotlarni qabul qilib UI'da ko'rsatish (default o'chiq)
 ```
 
 > `WEB_DIR` ko'rsatilsa (masalan `./web/dist`), API va web UI **bitta portda**
 > ishlaydi: `/` va dashboard yo'llari UI, `/api/*` va `/health/` esa API.
-> `install.sh` buni avtomatik sozlaydi.
 
 > **Telemetriya:** har bir instance **anonim** foydalanish sanoqlarini (foydalanuvchi,
 > account, carta, transaction, webhook log soni + versiya/OS) `STATS_URL`ga 6 soatda bir
-> yuboradi. Hech qanday maxfiy ma'lumot (token, telefon, carta raqami, ism) yuborilmaydi.
-> `STATS_REPORT=false` bilan butunlay o'chiriladi. `STATS_DASHBOARD=true` qilingan instance
+> yuboradi (default o'chiq — `STATS_REPORT=true` va `STATS_URL` kerak). Hech qanday maxfiy ma'lumot (token, telefon, carta raqami, ism) yuborilmaydi.
+> `STATS_DASHBOARD=true` qilingan instance
 > hisobotlarni qabul qiladi va dashboardda **Statistika** sahifasini ko'rsatadi (default o'chiq).
 
 ```bash
@@ -224,7 +191,7 @@ Javob: `amount` band bo'lmagan summa, va **qaysi cartada yaratilgani**:
   "amount": 20001,
   "card_id": 1,
   "transaction_id": "<uuid>",
-  "card": { "id": 1, "number": "8600...7159", "last4": "7159", "owner_name": "Samandar" }
+  "card": { "id": 1, "number": "8600...7159", "last4": "7159", "owner_name": "Ali Valiyev" }
 }
 ```
 
@@ -236,7 +203,7 @@ Javob: `amount` band bo'lmagan summa, va **qaysi cartada yaratilgani**:
 // status: "pending" (kod kutilmoqda) | "active" (ulangan)
 
 // Card  (last4 — number'dan avtomatik ajratiladi)
-{ "id": 1, "telegram_account_id": 1, "number": "8600...7159", "last4": "7159", "owner_name": "Samandar", "created_at": "..." }
+{ "id": 1, "telegram_account_id": 1, "number": "8600...7159", "last4": "7159", "owner_name": "Ali Valiyev", "created_at": "..." }
 ```
 
 ---
@@ -292,7 +259,7 @@ curl -X POST http://<host>:8080/api/telegram/verify \
 ```bash
 curl -X POST http://<host>:8080/api/cards \
   -H "Authorization: Bearer <token>" \
-  -d '{"telegram_account_id":1,"number":"8600 1234 5678 7159","owner_name":"Samandar"}'
+  -d '{"telegram_account_id":1,"number":"8600 1234 5678 7159","owner_name":"Ali Valiyev"}'
 ```
 
 `GET /api/cards` — cartalar ro'yxati.
@@ -364,7 +331,7 @@ onlinepay-cli telegram connect --phone +99890...   # interaktiv: kod va 2FA ni s
 onlinepay-cli telegram send-code --phone +99890...               # -> telegram_account_id
 onlinepay-cli telegram verify --account 1 --code 12345 [--password 2FA]
 onlinepay-cli telegram list
-onlinepay-cli card add --account 1 --number "8600 1234 5678 7159" --owner "Samandar"
+onlinepay-cli card add --account 1 --number "8600 1234 5678 7159" --owner "Ali Valiyev"
 onlinepay-cli card list
 onlinepay-cli transaction create --amount 20000            # carta avtomatik tanlanadi
 onlinepay-cli transaction create --card 1 --amount 20000   # aniq carta
@@ -411,9 +378,3 @@ fayli ilk ishga tushishda avtomatik `default` profilga ko'chiriladi.
 - Transaction `TRANSACTION_TIMEOUT` daqiqa (default 30) active qoladi, keyin avtomatik bekor qilinadi.
 - Har Telegram account uchun alohida session `SESSION_DIR`da saqlanadi.
 - Ko'p transactionda summa farqi o'sib boradi; buni kamaytirish uchun bir nechta carta/account ishlating.
-
-## Savollar?
-
-- `Telegram accountni ulash xavfsizmi?` — Ha, dastur open source, ma'lumotlar o'z
-  serveringizda qoladi, session fayllari sizda saqlanadi.
-- `Yordam bera olamanmi?` — Albatta, fork qiling va pull request yuboring.

@@ -24,8 +24,8 @@ type Config struct {
 	AmountCountDown bool
 
 	// Telemetriya (anonim foydalanish statistikasi)
-	StatsURL       string // hisobotlar yuboriladigan kollektor (default https://paycue.uz)
-	StatsReport    bool   // bu instance o'z anonim statistikasini yuboradimi (default ha)
+	StatsURL       string // hisobotlar yuboriladigan kollektor (default yo'q)
+	StatsReport    bool   // bu instance o'z anonim statistikasini yuboradimi (default yo'q)
 	StatsDashboard bool   // bu instance hisobotlarni qabul qilib UI'da ko'rsatadimi (default yo'q)
 }
 
@@ -76,8 +76,8 @@ func NewConfig() (*Config, error) {
 
 		AmountCountDown: strings.ToLower(GetenvValue("AMOUNT_DIRECTION", "up")) == "down",
 
-		StatsURL:       GetenvValue("STATS_URL", "https://paycue.uz"),
-		StatsReport:    os.Getenv("STATS_REPORT") != "false",  // default: yoqilgan (yubor)
+		StatsURL:       GetenvValue("STATS_URL", ""),
+		StatsReport:    os.Getenv("STATS_REPORT") == "true" && os.Getenv("STATS_URL") != "", // faqat aniq yoqilsa
 		StatsDashboard: os.Getenv("STATS_DASHBOARD") == "true", // default: o'chiq
 	}, nil
 }

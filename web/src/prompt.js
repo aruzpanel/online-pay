@@ -1,8 +1,6 @@
 // AI dasturchiga beriladigan Online Pay integratsiya prompti.
 // Foydalanuvchiga ko'rsatilmaydi — faqat clipboardga nusxalanadi.
 
-export const REPO = 'https://github.com/UzStack/paycue'
-
 export function buildIntegrationPrompt({ base, token, secret, webhookUrl }) {
   const secretLine = secret
     ? `- Webhook secret (X-API-Key, maxfiy): ${secret}`
@@ -16,7 +14,7 @@ export function buildIntegrationPrompt({ base, token, secret, webhookUrl }) {
 # Online Pay nima
 Online Pay — Humo kartaga tushgan to'lovlarni Telegram orqali real vaqtda aniqlab, webhook
 orqali mening serverimga xabar beradigan to'lov tizimi. Rasmiy to'lov shlyuzi (Payme/Click)
-yoki merchant shartnoma talab qilmaydi. To'liq API hujjati va manba kodi: ${REPO}
+yoki merchant shartnoma talab qilmaydi.
 
 # Konfiguratsiya
 - API base URL: ${base}

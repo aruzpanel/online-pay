@@ -27,9 +27,7 @@ import (
 var VERSION = "dev" // build vaqtida ldflags orqali tag'dan to'ldiriladi
 
 func author() {
-	fmt.Println("Fullname      Azamov Samandar")
-	fmt.Println("Telegram      https://t.me/Azamov_Samandar")
-	fmt.Println("Github        https://github.com/UzStack")
+	fmt.Println("Online Pay    " + VERSION)
 	os.Exit(0)
 }
 
@@ -109,7 +107,7 @@ func main() {
 	tgManager := telegram.NewManager(cfg, db, log, tasks)
 	tgManager.RestoreWatchers(ctx)
 
-	// Anonim foydalanish statistikasini kollektorga yuborib turamiz (STATS_REPORT=false bilan o'chiriladi).
+	// Anonim foydalanish statistikasini kollektorga yuborib turamiz (STATS_REPORT=true va STATS_URL bilan yoqiladi).
 	if cfg.StatsReport {
 		usecase.StartStatsReporter(ctx, db, log, cfg, VERSION)
 	}
